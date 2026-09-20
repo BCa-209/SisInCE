@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta y Exportación de Estudiantes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf para generación de PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+    <div class="container">
+        <header style="position: relative;">
+            <button id="theme-toggle" class="btn-secondary btn-small" style="position: absolute; top: 0; right: 0;">🌙</button>
+            <h1>Sistema de Consulta y Exportación</h1>
+            <p>Información Estudiantil</p>
+        </header>
+        
+        <!-- SECCIÓN 1: BÚSQUEDA -->
+        <main>
+            <!-- SECCIÓN 1: SELECCIÓN DE CRITERIO -->
+            <section class="search-criteria-section card">
+                <h2>1. BÚSQUEDA (SELECCIONAR CRITERIO)</h2>
+                <div class="criteria-selector" id="criteria-selector">
+                    <button type="button" class="criterion-btn" data-value="codigo">Código</button>
+                    <button type="button" class="criterion-btn" data-value="dni">DNI</button>
+                    <button type="button" class="criterion-btn" data-value="nombre">Apellidos y Nombres</button>
+                    <button type="button" class="criterion-btn" data-value="facultad">Facultad</button>
+                    <button type="button" class="criterion-btn" data-value="escuela">Escuela Profesional</button>
+                    <button type="button" class="criterion-btn" data-value="ingreso">Año de Ingreso</button>
+                    <button type="button" class="criterion-btn" data-value="personalizada">Personalizada (Combinar)</button>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 1.5: INGRESAR DATOS (OCULTO INICIALMENTE) -->
+            <section class="search-input-section card hidden" id="search-input-section">
+                <h2>INGRESAR DATOS</h2>
+                <form id="search-form">
+                    <input type="hidden" id="criterio" value="">
+                    
+                    <div class="dynamic-field-box" id="dynamic-field-container">
+                        <!-- Campo individual normal -->
+                        <div id="single-field-wrapper">
+                            <label for="search-input" id="dynamic-label">Campo de búsqueda</label>
+                            <input type="text" id="search-input" class="form-control" placeholder="">
+                            <select id="search-select-facultad" class="form-control hidden">
+                                <option value="">Todas / Seleccione...</option>
+                            </select>
+                            <select id="search-select-escuela" class="form-control hidden">
+                                <option value="">Todas / Seleccione...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campos múltiples para búsqueda personalizada -->
+                        <div id="custom-fields-wrapper" class="hidden">
+                            <p class="instruction-text" style="margin-bottom: 1rem;">Llena los campos que desees combinar para buscar:</p>
+                            <div class="custom-grid">
+                                <div>
+                                    <label>Código:</label>
+                                    <input type="text" id="custom-codigo" class="form-control" placeholder="Ej. 20240001">
+                                </div>
+                                <div>
+                                    <label>DNI:</label>
+                                    <input type="text" id="custom-dni" class="form-control" placeholder="Ej. 12345678">
+                                </div>
+                                <div>
+                                    <label>Nombres:</label>
+                                    <input type="text" id="custom-nombre" class="form-control" placeholder="Ej. Perez">
+                                </div>
+                                <div>
+                                    <label>Facultad:</label>
+                                    <select id="custom-facultad" class="form-control">
+                                        <option value="">Todas / Seleccione...</option>
+                                    </select>
+                                </div>
+                                <div class="custom-grid" style="grid-column: 1 / -1;">
+                                    <div>
+                                        <label>Escuela Profesional:</label>
+                                        <select id="custom-escuela" class="form-control">
+                                            <option value="">Todas / Seleccione...</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Año Ingreso:</label>
+                                        <input type="number" id="custom-ingreso" class="form-control" placeholder="Ej. 2020">
+                                    </div>
+                                    <div>
+                                        <label>Ciclo:</label>
+                                        <select id="custom-ciclo" class="form-control">
+                                            <option value="">Todos</option>
+                                            <option value="I">I</option>
+                                            <option value="II">II</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Género:</label>
+                                        <select id="custom-genero" class="form-control">
+                                            <option value="">Todos</option>
+                                            <option value="masculino">Masculino</option>
+                                            <option value="femenino">Femenino</option>
+                                        </select>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button type="submit" class="btn-primary">BUSCAR</button>
+                        <button type="reset" class="btn-secondary" id="btn-reset">LIMPIAR</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- SECCIÓN 2: RESULTADOS -->
+            <section class="results-section card">
+                <h2>2. RESULTADOS <span id="results-count" class="badge hidden">0</span></h2>
+                <div id="loading" class="hidden">
+                    <div class="spinner"></div>
+                    <p>Buscando...</p>
+                </div>
+                <div id="error-message" class="hidden alert alert-error"></div>
+                
+                <div id="results-container" class="results-grid">
+                    <!-- Los resultados se inyectarán aquí -->
+                </div>
+                
+                <div id="pagination-container" class="pagination" style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.5rem;">
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: PLANTILLA EDITABLE -->
+            <section class="template-section card hidden" id="template-section" style="position: relative;">
+                <button type="button" id="btn-close-template" class="btn-secondary btn-small" style="position: absolute; top: 1rem; right: 1rem; border-radius: 50%; width: 30px; height: 30px; padding: 0; line-height: 1; font-size: 14px;" title="Cerrar Plantilla">✕</button>
+                <h2>3. PLANTILLA EDITABLE</h2>
+                <p class="instruction-text">Los datos han sido pre-llenados. Puedes dar clic sobre cualquier texto para editarlo antes de imprimir.</p>
+                
+                <div class="template-wrapper">
+                    <div class="template-canvas" id="template-canvas">
+                        <!-- Imagen de fondo simulada con CSS, pero puedes poner un <img> detrás -->
+                        <div class="template-background">
+                            <div class="watermark">U.N.S.A.</div>
+                        </div>
+                        
+                        <div class="template-content">
+                            <div class="t-row">
+                                <span class="t-label">CÓDIGO:</span>
+                                <div class="t-value" contenteditable="true" id="t-codigo"></div>
+                            </div>
+                            <div class="t-row">
+                                <span class="t-label">DNI:</span>
+                                <div class="t-value" contenteditable="true" id="t-dni"></div>
+                            </div>
+                            <div class="t-row">
+                                <span class="t-label">NOMBRES:</span>
+                                <div class="t-value" contenteditable="true" id="t-nombre"></div>
+                            </div>
+                            <div class="t-row">
+                                <span class="t-label">FACULTAD:</span>
+                                <div class="t-value" contenteditable="true" id="t-facultad"></div>
+                            </div>
+                            <div class="t-row">
+                                <span class="t-label">ESCUELA:</span>
+                                <div class="t-value" contenteditable="true" id="t-escuela"></div>
+                            </div>
+                            <div class="t-row">
+                                <span class="t-label">INGRESO/CICLO:</span>
+                                <div class="t-value" contenteditable="true" id="t-ingreso-ciclo">2020 - VIII</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="print-actions">
+                    <button type="button" class="btn-success btn-large" id="btn-print">IMPRIMIR PDF</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Plantilla para los resultados -->
+    <template id="student-card-template">
+        <div class="student-card">
+            <div class="student-header">
+                <h3 class="student-name"></h3>
+                <span class="student-code badge"></span>
+            </div>
+            <div class="student-body" id="student-text-content">
+                <p><strong>DNI:</strong> <span class="student-dni"></span></p>
+                <p><strong>Facultad:</strong> <span class="student-faculty"></span></p>
+                <p><strong>Escuela:</strong> <span class="student-school"></span></p>
+            </div>
+            <div class="student-actions">
+                <button type="button" class="btn-secondary btn-small btn-copy">Copiar como texto</button>
+                <button type="button" class="btn-primary btn-small btn-select">Usar para plantilla</button>
+            </div>
+        </div>
+    </template>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

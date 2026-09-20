@@ -1,0 +1,23 @@
+# Configuración y Secretos
+.env
+
+# Bases de datos
+*.db
+*.sqlite3
+test.db
+
+# Vercel
+vercel.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store
