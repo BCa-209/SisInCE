@@ -93,3 +93,19 @@ python -m http.server 8080
 ## 🔒 Consideraciones para Producción (Despliegue)
 - **Base de Datos y Secretos**: Al desplegar el backend, recuerda crear un archivo `.env` que contenga tu cadena de conexión (`DATABASE_URL`). Este repositorio ignora intencionalmente los archivos `.env` y `.db` por seguridad.
 - **Frontend URL**: Si subes el backend a la nube (ej. Render o Railway), actualiza la variable `FRONTEND_URL` en las variables de entorno para configurar adecuadamente el CORS, y cambia la constante `API_URL` en `frontend/js/config.js` para que apunte al nuevo servidor remoto.
+
+
+## Puertos Locales
+- **Frontend:** 8001
+- **Backend:** 8000
+
+## Comandos Para Ejecutar en Local
+Ejecutar en la carpeta correspondiente
+**frontend**
+```
+python -m http.server 8001
+```
+**Backend**
+```
+.\.venv\Scripts\activate; uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
