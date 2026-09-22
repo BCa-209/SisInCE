@@ -16,14 +16,14 @@ import os
 
 # Determinar los orígenes permitidos
 # En producción, configurar la variable FRONTEND_URL con el dominio de Vercel
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:8080")
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:8001")
 origins = [
     frontend_url,
-    "http://localhost:8080",
-    "http://127.0.0.1:8080"
+    "http://localhost:8001",
+    "http://127.0.0.1:8001"
 ]
 
-# Configurar CORS para permitir que el frontend se comunique
+# Configuración CORS para producción/Vercel
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
