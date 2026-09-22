@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: sisince-app
+    env: python
+    # Comando para instalar las dependencias
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    # Comando para iniciar el servidor
+    startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DATABASE_URL
+        value: sqlite:///../db/data_base.db
