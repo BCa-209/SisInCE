@@ -15,19 +15,10 @@ app = FastAPI(
 
 import os
 
-# Determinar los orígenes permitidos
-# En producción, configurar la variable FRONTEND_URL con el dominio de Vercel
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:8001")
-origins = [
-    frontend_url,
-    "http://localhost:8001",
-    "http://127.0.0.1:8001"
-]
-
-# Configuración CORS para producción/Vercel
+# Configuración CORS para entorno local
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
