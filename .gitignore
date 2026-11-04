@@ -40,7 +40,7 @@ credentials.json
 *.manifest
 *.spec
 
-
+render.yaml
 
 # Installer logs
 pip-log.txt
