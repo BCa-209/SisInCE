@@ -3,11 +3,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import List, Optional
 from app.database import get_db
+from app.dependencies import get_current_student
 from app import models, schemas
 
 router = APIRouter(
     prefix="/api/estudiantes",
-    tags=["estudiantes"]
+    tags=["estudiantes"],
+    dependencies=[Depends(get_current_student)]
 )
 
 @router.get("/", response_model=List[schemas.Estudiante])
@@ -43,7 +45,7 @@ def get_estudiantes(
     if ingreso is not None:
         query = query.filter(models.Estudiante.anio_ingreso == ingreso)
     if ciclo:
-        query = query.filter(models.Estudiante.ciclo == ciclo) # Podría requerir casteo si ciclo es Int pero se pasa String
+        query = query.filter(models.Estudiante.ciclo == ciclo)
     if genero:
         query = query.filter(models.Estudiante.genero.ilike(genero))
         

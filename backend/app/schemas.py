@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 
 class EstudianteBase(BaseModel):
@@ -12,7 +12,6 @@ class EstudianteBase(BaseModel):
 
 class Estudiante(EstudianteBase):
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class FacultadBase(BaseModel):
@@ -21,7 +20,6 @@ class FacultadBase(BaseModel):
 
 class Facultad(FacultadBase):
     class Config:
-        orm_mode = True
         from_attributes = True
 
 class EscuelaBase(BaseModel):
@@ -31,5 +29,31 @@ class EscuelaBase(BaseModel):
 
 class Escuela(EscuelaBase):
     class Config:
-        orm_mode = True
         from_attributes = True
+
+# --- Esquemas de Autenticación ---
+
+class LoginRequest(BaseModel):
+    nombres: str = Field(..., min_length=1, description="Nombres del estudiante")
+    apellidos: str = Field(..., min_length=1, description="Apellidos (paterno y materno) del estudiante")
+    codigo: str = Field(..., min_length=1, description="Código de estudiante")
+
+class EstudianteAuthProfile(BaseModel):
+    codigo: str
+    nombres: str
+    apellidos_nombres: str
+    dni: Optional[str] = None
+    facultad: str
+    escuela_profesional: str
+    anio_ingreso: Optional[int] = None
+    ciclo: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class LoginResponse(BaseModel):
+    message: str
+    estudiante: EstudianteAuthProfile
+
+class MessageResponse(BaseModel):
+    message: str

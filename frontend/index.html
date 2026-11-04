@@ -7,18 +7,66 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- html2pdf para generación de PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
     <div class="container">
-        <header style="position: relative;">
-            <button id="theme-toggle" class="btn-secondary btn-small" style="position: absolute; top: 0; right: 0;">🌙</button>
+        <header>
+            <div class="header-top-bar">
+                <div id="user-session-bar" class="user-session-bar hidden">
+                    <div class="user-badge" id="user-badge">
+                        <span class="user-icon">👤</span>
+                        <span id="user-display-name">Cargando...</span>
+                    </div>
+                    <button type="button" id="btn-logout" class="btn-logout" title="Cerrar sesión">Cerrar Sesión</button>
+                </div>
+                <button id="theme-toggle" class="btn-secondary btn-small" title="Cambiar tema" style="margin-left: auto;">🌙</button>
+            </div>
             <h1>Sistema de Consulta y Exportación</h1>
             <p>Información Estudiantil</p>
         </header>
+
+        <!-- SECCIÓN DE AUTENTICACIÓN (LOGIN CON 3 CAMPOS) -->
+        <section id="login-section" class="card login-card">
+            <div class="login-header">
+                <div class="login-avatar">🔐</div>
+                <h2>Acceso al Sistema</h2>
+                <p class="login-subtitle">Ingrese sus credenciales de estudiante para iniciar sesión.</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-nombres">Nombres:</label>
+                    <input type="text" id="login-nombres" class="form-control" placeholder="Ej. YENY NAYELI" required autocomplete="given-name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-apellidos">Apellidos:</label>
+                    <input type="text" id="login-apellidos" class="form-control" placeholder="Ej. ACEITUNO TICONA" required autocomplete="family-name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="login-codigo">Código de Estudiante:</label>
+                    <input type="text" id="login-codigo" class="form-control" placeholder="Ej. 214996" required autocomplete="username">
+                </div>
+                
+                <div id="login-error" class="alert alert-error hidden"></div>
+                
+                <div id="login-loading" class="hidden" style="text-align: center; margin: 1rem 0;">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 0.5rem; color: var(--text-muted); font-size: 0.9rem;">Verificando credenciales...</p>
+                </div>
+                
+                <div class="actions" style="margin-top: 1.5rem;">
+                    <button type="submit" id="btn-login-submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 1rem;">
+                        INICIAR SESIÓN
+                    </button>
+                </div>
+            </form>
+        </section>
         
-        <!-- SECCIÓN 1: BÚSQUEDA -->
-        <main>
+        <!-- SECCIÓN PRINCIPAL DE LA APLICACIÓN (RECURSOS PROTEGIDOS) -->
+        <main id="app-content" class="hidden">
             <!-- SECCIÓN 1: SELECCIÓN DE CRITERIO -->
             <section class="search-criteria-section card">
                 <h2>1. BÚSQUEDA (SELECCIONAR CRITERIO)</h2>
@@ -102,6 +150,7 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -137,7 +186,6 @@
                 
                 <div class="template-wrapper">
                     <div class="template-canvas" id="template-canvas">
-                        <!-- Imagen de fondo simulada con CSS, pero puedes poner un <img> detrás -->
                         <div class="template-background">
                             <div class="watermark">U.N.S.A.</div>
                         </div>

@@ -69,24 +69,38 @@ python -m venv .venv
 .venv\Scripts\activate
 # En Linux/Mac:
 source .venv/bin/activate
+
 pip install -r requirements.txt
 
-# 3. Arrancar el servidor local
-uvicorn app.main:app --reload
+# 3. Arrancar el servidor backend local
+uvicorn app.main:app --reload --port 8000
 ```
-*La API estará disponible en `http://localhost:8000`*
+*La API estará disponible en `http://localhost:8000` con documentación interactiva en `http://localhost:8000/docs`.*
+
+---
+
+## 🔐 Autenticación y Sesiones Seguras
+
+El sistema integra autenticación de estudiantes con sesiones seguras administradas por FastAPI y cookies `HttpOnly`:
+- **Inicio de sesión con 3 campos:** Nombres, Apellidos y Código de estudiante.
+- **Base de datos original en modo solo lectura:** La información de los estudiantes nunca se modifica.
+- **Almacenamiento independiente de sesiones:** En SQLite (`backend/sessions.db`) guardando únicamente el hash criptográfico SHA-256 del token.
+- **Expiración por inactividad:** Las sesiones vencen automáticamente tras 30 minutos sin peticiones.
+- **Protección de endpoints privados:** Rutas como `/api/estudiantes/` requieren una sesión válida activa.
+
+---
 
 ### 2. Levantar el Frontend
-Debes servir los archivos usando un servidor web local (necesario por el uso de módulos ES6). Puedes usar Python para levantarlo rápidamente:
+Debes servir los archivos usando un servidor web local (necesario por el uso de módulos ES6 y cookies de sesión). Puedes usar Python para levantarlo rápidamente:
 
 ```bash
 # 1. Abre otra terminal y ve a la carpeta del frontend
 cd frontend
 
 # 2. Inicia el servidor
-python -m http.server 8080
+python -m http.server 8001
 ```
-*Visita `http://localhost:8080` en tu navegador para ver la aplicación.*
+*Visita `http://localhost:8001` en tu navegador para ver la aplicación.*
 
 ---
 
